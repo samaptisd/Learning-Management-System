@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Activity Log</title>
+    <style>
+        /* Styling for the table */
+        .table-container {
+            width: 90%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f1f1f1;
+            border-radius: 8px;
+            height: 80vh;
+            overflow: auto;
+        }
+
+        .activity-log-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .activity-log-table th, .activity-log-table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .activity-log-table th {
+            background-color: #004d8d;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .activity-log-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .activity-log-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Pagination styling */
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pagination button {
+            padding: 10px;
+            background-color: #004d8d;
+            color: white;
+            border: none;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .pagination button:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        /* Search input styling */
+        .search-container input[type="text"] {
+            width: 90%;
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            margin-top: 5px;
+        }
+
+        /* Export button - smaller size and aligned to the left */
+        .export-btn {
+    float: left; /* Float to the left */
+    margin: 10px 0;
+    padding: 5px 15px;
+    background-color: #28a745;
+    color: white;
+    text-align: center;
+    border-radius: 3px;
+    font-size: 12px;
+    text-decoration: none;
+    display: block; /* Treat the button as block level to respect float */
+}
+
+    </style>
+</head>
+<body>
+
+<div class="table-container">
+    <!-- Add an Export to Excel button - small and aligned left -->
+    <a href="{% url 'export_to_excel' %}" class="export-btn">Export to Excel</a>
+
+    <table class="activity-log-table" id="activityLogTable">
+        <thead>
+        <tr>
+            <th>User</th>
+            <th>Name</th>
+            <th>Action</th>
+            <th>URL</th>
+            <th>Method</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Duration</th>
+        </tr>
+        <tr>
+            <td><input type="text" class="search-box" placeholder="Search User"></td>
+            <td><input type="text" class="search-box" placeholder="Search Action"></td>
+            <td><input type="text" class="search-box" placeholder="Search URL"></td>
+            <td><input type="text" class="search-box" placeholder="Search Method"></td>
+            <td><input type="text" class="search-box" placeholder="Search Start Time"></td>
+            <td><input type="text" class="search-box" placeholder="Search End Time"></td>
+            <td><input type="text" class="search-box" placeholder="Search Duration"></td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.user.username }}</td>
+            <td>{{ log.user.get_full_name }}</td>
+            <td>{{ log.action }}</td>
+            <td>{{ log.url }}</td>
+            <td>{{ log.method }}</td>
+            <td>{{ log.start_time }}</td>
+            <td>{{ log.end_time|default:"Ongoing" }}</td>
+            <td>
+                {% if log.duration %}
+                    {{ log.duration }}
+                {% else %}
+                    Ongoing
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <button disabled>&lt;&lt;</button>
+        <button class="current-page">1</button>
+        <button>2</button>
+        <button>&gt;&gt;</button>
+    </div>
+</div>
+
+<script>
+    // Filter for each column
+    document.querySelectorAll('.search-box').forEach((input, index) => {
+        input.addEventListener('keyup', function () {
+            const filter = input.value.toUpperCase();
+            const rows = document.querySelectorAll('#activityLogTable tbody tr');
+            rows.forEach(row => {
+                const cell = row.getElementsByTagName('td')[index];
+                if (cell) {
+                    const txtValue = cell.textContent || cell.innerText;
+                    row.style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
+
+{% endblock %}

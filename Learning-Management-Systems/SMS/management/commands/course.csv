@@ -1,0 +1,11 @@
+id,slug,title,code,credit,summary,level,vertical,language,is_elective,program_id
+2,how-to-sale-a-product-beginners,How to Sale a Product- Beginners,SA-001,0,,Bachloar,Branch,First,1,2
+3,Basic- CSS,Basic- CSS,SA-002,0,,Basic,Branch,Hindi,1,1
+4,Intermediate- CSS,Intermediate- CSS,SA-003,0,,Intermediate,Branch,Hindi,1,2
+5,Advanced- CSS,Advanced- CSS,SA-004,0,,Advanced,Branch,Hindi,1,3
+6,Basic- CBD of CSS,Basic- CBD of CSS,SA-005,0,,Basic,Branch,Hindi,1,1
+7,Intermediate- CBD of CSS,Intermediate- CBD of CSS,SA-006,0,,Intermediate,Branch,Hindi,1,2
+8,Advanced-CBD of CSS,Advanced-CBD of CSS,SA-007,0,,Advanced,Branch,Hindi,1,3
+9,Basic- PSPS,Basic- PSPS,SA-008,0,,Basic,Branch,Hindi,1,1
+10,Intermediate- PSPS,Intermediate- PSPS,SA-009,0,,Intermediate,Branch,Hindi,1,2
+11,Advanced- PSPS,Advanced- PSPS,SA-010,0,,Advanced,Branch,Hindi,1,3

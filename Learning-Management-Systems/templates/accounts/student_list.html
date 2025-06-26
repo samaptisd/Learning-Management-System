@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Load static before using the static tag -->
+
+{% block title %}{{ title }}{% endblock title %}
+
+{% block content %}
+<center>
+    <img src="{% static 'img/gyandhara-removelogo.png' %}" alt="Company Logo" class="img-fluid my-3" style="max-width: 200px;">
+</center>
+
+<div id="input-nav">
+    <a href="{% url 'home' %}" class="primary1">Home</a> &rsaquo; Aludecorian
+</div>
+
+{% if request.user.is_superuser %}
+    <a class="add-button" href="{% url 'add_student' %}">
+        <i class="fas fa-plus"></i> Add Aludecorian
+    </a>
+{% endif %}
+
+<div class="title-1">
+    <i class="fas fa-user-graduate"></i> Team List
+</div>
+
+<div class="content-center">
+    <form class="search-form" action="" method="GET">
+        <input class="au-input" type="text" id="student" name="student" placeholder="ID No." value="{{ request.GET.student }}"/>
+        <input class="au-input" type="text" name="name" placeholder="Name" value="{{ request.GET.name }}"/>
+        <input class="au-input" type="text" name="department" placeholder="Department" value="{{ request.GET.department }}"/>
+        <button class="btn btn-light" type="submit">
+            <i class="fas fa-search"></i> filter
+        </button>
+    </form>
+</div>
+
+<div class="table-responsive table-shadow table-light table-striped m-0 mt-5">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>ID No.</th>
+                <th>Full Name</th>
+                <th>Department</th>
+                <th>Program</th>
+                <th>Course</th>
+                {% if request.user.is_superuser %}
+                    <th>Action</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in object_list %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+
+                    <!-- ✅ Fix: Ensure student.student.id exists before using the URL -->
+                    <td>
+                        {% if student.student and student.student.id %}
+                            <a href="{% url 'profile_single' student.student.id %}">{{ student.student.id }}</a>
+                        {% else %}
+                            <span>No ID</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if student.student and student.student.id %}
+                            <a href="{% url 'profile_single' student.student.id %}">{{ student.student.get_full_name }}</a>
+                        {% else %}
+                            <span>No Name</span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ student.student.department }}</td>
+
+                    <!-- ✅ Fix: Ensure 'course' exists before accessing its attributes -->
+                    <td>
+                        {% if student.course and student.course.course_program %}
+                            {{ student.course.course_program }}
+                        {% else %}
+                            <span>No Program</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if student.course and student.course.title %}
+                            {{ student.course.title }}
+                        {% else %}
+                            <span>No Course</span>
+                        {% endif %}
+                    </td>
+
+                    {% if request.user.is_superuser %}
+                        <td>
+                            {% if student.student and student.student.pk %}
+                            <a href="{% url 'student_edit' student.student.pk %}" class="update" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        {% else %}
+                            <span>No Edit Available</span>
+                        {% endif %}
+                            
+                        {% if student.student and student.student.pk %}
+                        <form action="{% url 'student_delete' student.student.pk %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm" title="Delete">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    {% else %}
+                        <span>No Delete Available</span>
+                    {% endif %}
+                    
+                        </td>
+                    {% endif %}
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">
+                        No Aludecorian found. <a href="{% url 'add_student' %}">Add Aludecorian Now</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %} <!-- Add this line to load static files -->
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card mt-4 p-4 shadow-sm">
+        <center>
+            <img src="{% static 'img/gyandhara-removelogo.png' %}" alt="Company Logo" class="img-fluid my-3" style="max-width: 200px;">
+        </center>
+        
+        <h2 class="text-center">{{ title }}</h2>
+
+        <!-- Form Start -->
+        <form method="post" action="">
+            {% csrf_token %}
+            <!-- Lecturer Field -->
+            <div class="form-group mb-3">
+                {{ form.student.label_tag }}
+                <input type="text" class="form-control" placeholder="type here..." />
+                {% if form.student.errors %}
+                    <span class="text-danger">{{ form.student.errors }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Courses Field -->
+            <div class="form-group mb-3">
+                {{ form.courses.label_tag }}
+                <div class="course-options">
+                    {{ form.courses|as_crispy_field }}
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary w-50">Add Allocation</button>
+            </div>
+        </form>
+        <!-- Form End -->
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    /* Add shadow and border radius to the form container */
+    .card {
+        border-radius: 10px;
+        background: #ffffff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Align the title and add gradient */
+    h2.text-center {
+        font-size: 1.5rem;
+        font-weight: bold;
+        background: linear-gradient(to right, #004dff, #00a3ff);
+        /* -webkit-background-clip: text; */
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Style the form fields */
+    .form-group label {
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .form-group input.form-control, 
+    .form-group select.form-control {
+        border: 2px solid #dcdcdc;
+        height: 45px;
+        font-size: 1rem;
+        padding-left: 10px;
+        border-radius: 5px;
+    }
+
+    /* Style the course options */
+    .course-options {
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid #dcdcdc;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+
+    .course-options label {
+        display: block;
+        font-weight: normal;
+        margin-bottom: 5px;
+    }
+
+    /* Style the submit button */
+    button.btn {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    /* Ensure responsiveness */
+    @media (max-width: 768px) {
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+{% endblock %}

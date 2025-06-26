@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block title %} {% trans "Progress Page" %} {% endblock %}
+{% block description %} {% trans "User Progress Page" %} {% endblock %}
+
+{% block content %}
+
+<center>
+    <img src="{% static 'img/gyandhara-removelogo.png' %}" alt="Company Logo" class="img-fluid my-3" style="max-width: 200px;">
+</center>
+
+<div id="input-nav">
+    <a href="{% url 'home' %}" class="primary1">{% trans "Home" %}</a> 
+    <i>&rsaquo;</i> 
+    {% trans "Progress Page" %}
+</div>
+
+<hr class="my-4">
+
+<div class="header-title text-center">{% trans "Team Quiz Progress" %}</div>
+<div class="title-line"></div>
+
+<div class="table-responsive table-light table-striped mt-4">
+    <table class="table table-bordered">
+        <thead class="bg-primary">
+            <tr>
+                <th>#</th>
+                <th>{% trans "Username" %}</th>
+                <th>{% trans "Quiz Title" %}</th>
+                <th>{% trans "Current Score" %}</th>
+                <th>{% trans "Possible Score" %}</th>
+                <th>{% trans "Out of 100%" %}</th>
+                <th>{% trans "Time Taken" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in team_progress %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ row.Username }}</td>
+                <td>{{ row.Quiz_Title }}</td>
+                <td>{{ row.Current_Score }}</td>
+                <td>{{ row.Possible_Score }}</td>
+                <td>{{ row.Out_of_100 }}%</td>
+                <td> {{ row.Time_Taken|time:"H:i:s" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center text-muted">
+                    <i class="far fa-frown"></i> {% trans "No quiz progress data found." %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

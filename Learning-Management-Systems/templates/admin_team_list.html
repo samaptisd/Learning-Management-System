@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock title %}
+
+{% block content %}
+
+<div class="title-1"><i class="fas fa-users-cog"></i> Admin Team Summary</div>
+<div class="title-line"></div>
+<style>
+/* Freeze table header */
+.table thead th {
+    position: sticky;
+    top: 0;
+    background-color:rgb(164, 203, 241); /* light background to match Bootstrap light tables */
+    z-index: 2;
+    box-shadow: inset 0 -1px 0 #ddd;
+}
+.table-responsive {
+    max-height: 500px; /* adjust as needed */
+    overflow-y: auto;
+}
+</style>
+<!-- Summary Table -->
+<div class="table-responsive table-shadow table-light table-striped mt-4">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Reporting To Name</th>
+                <th>Total Team</th>
+                <th>Total Courses</th>
+                <th>Soft Skill Courses</th>
+                <th>Technical Skill Courses</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in summary_data %}
+            <tr>
+                <td>{{ forloop.counter }}.</td>
+                
+                <td>{{ row.reporting_to_name }}({{ row.reporting_to_id }})</td>
+                <td>{{ row.total_team }}</td>
+                <td>{{ row.total_courses }}</td>
+                <td>{{ row.op_courses }}</td>
+                <td>{{ row.other_courses }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">
+                    <i class="far fa-frown"></i> No summary data found.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Detailed Team Table -->
+<div class="title-1 mt-5"><i class="fas fa-chalkboard-teacher"></i> Team Course Details</div>
+<div class="title-line"></div>
+
+<div class="table-responsive table-shadow table-light table-striped mt-4">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Reporting To Name</th>
+                <th>User Name</th>
+                <th>Program Name</th>
+                <th>Course Name</th>
+                <th>Course Code</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in team_data %}
+            <tr>
+                <td>{{ forloop.counter }}.</td>
+               
+                <td>{{ row.reporting_to_name }}({{ row.reporting_to_id }})</td>
+                <td>{{ row.user_name }}({{ row.user_id }})</td>
+                <td>{{ row.program_name }}</td>
+                <td>{{ row.course_name }}</td>
+                <td>{{ row.code }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" class="text-center">
+                    <i class="far fa-frown"></i> No team member course data found.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}

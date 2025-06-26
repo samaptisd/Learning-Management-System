@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock title %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+<center><img src="{% static 'img/gyandhara-removelogo.png' %}" alt="Company Logo" class="img-fluid my-3" style="max-width: 200px;"></center>
+
+<div id="input-nav"><a href="{% url 'home' %}" class="primary1">Home</a> <i>&rsaquo;</i> Admin Panel</div>
+
+<div class="title-1"><i class="fas fa-user-tie"></i>Admin Panel</div>
+<br>
+{% if messages %}
+    {% for message in messages %}
+        {% if message.tags == 'error' %}
+            <!-- <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>{{ message }}
+            </div> -->
+        {% else %}
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>{{ message }}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<div class="admin-panel">
+    <div class="row">
+        <div class="col-md-6 p-5 bg-gradient-light">
+            Manage<a class="btn btn-sm btn-secondary" href="{% url 'lecturer_list' %}"> Aludecorian - Trainer &raquo;</a>
+            <p><span>&LongRightArrow;</span> CRUD (Create, Retrieve, Update & Delete) lecturers</p><hr>
+            Manage<a class="btn btn-sm btn-secondary" href="{% url 'student_list' %}"> Aludecorian - Trainee &raquo;</a>
+            <p><span>&LongRightArrow;</span> CRUD (Create, Retrieve, Update & Delete) students</p><hr>
+            Manage<a class="btn btn-sm btn-secondary" href="{% url 'hod_list' %}"> Functional Head &raquo;</a>
+            <p><span>&LongRightArrow;</span> CRUD (Create, Retrieve, Update & Delete) hod</p>
+        </div>
+        <div class="col-md-6 p-5 bg-gradient-light">
+            Course Add & Drop
+            <label class="switch switch-text switch-success switch-pill" style="float: right;">
+              <input type="checkbox" class="switch-input" checked="true">
+              <span data-on="On" data-off="Off" class="switch-label"></span>
+              <span class="switch-handle"></span>
+            </label>
+            <p><span>&LongRightArrow;</span> Switch 
+                <i class="info-text bg-success">ON</i> or <i class="info-text bg-danger">OFF</i>
+            </p><hr>
+
+            Manage<a class="btn btn-sm btn-secondary" href="{% url 'programs' %}"> Programs & Courses &raquo;</a>
+            <p><span>&LongRightArrow;</span> CRUD (Create, Retrieve, Update & Delete) programs</p>
+            <p><span>&LongRightArrow;</span> CRUD (Create, Retrieve, Update & Delete) courses</p><hr>
+            Manage<a class="btn btn-sm btn-secondary" href="{% url 'course_allocation_view' %}"> Course Allocations &raquo;</a>
+            <p><span>&LongRightArrow;</span> CRUD (Create, Retrieve, Update & Delete) course allocations</p><hr>
+            Manage<a class="btn btn-sm btn-secondary" href="{% url 'home' %}"> News & Events &raquo;</a>
+            <p><span>&LongRightArrow;</span> CRUD (Create, Retrieve, Update & Delete) News & Events</p>
+
+            <!-- Updated link for Course Allocation Approval -->
+            Manage<a class="btn btn-sm btn-secondary" href="{% url 'course_allocation_approval_list' %}"> Course Allocation Approval &raquo;</a>
+            <p><span>&LongRightArrow;</span> View and approve pending course allocations</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

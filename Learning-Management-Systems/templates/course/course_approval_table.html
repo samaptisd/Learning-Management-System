@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Course Allocation Approval{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4 mb-4">Pending Course Requests</h1>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Team Member</th>
+                <th>Program</th>
+                <th>Course</th>
+                <th>Department</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for allocation in course_requests %}
+            <tr>
+                <form method="POST" action="{% url 'course_allocation_approval_list' %}">
+                    {% csrf_token %}
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ allocation.team_member }}</td>
+                    <td>{{ allocation.program.title }}</td>
+                    <td>{{ allocation.course.title }}</td>
+                    <td>{{ allocation.department }}</td>
+                    <td>
+                        <select name="status" class="form-select">
+                            <option value="Pending" {% if allocation.status == "Pending" %}selected{% endif %}>Pending</option>
+                            <option value="Approved" {% if allocation.status == "Approved" %}selected{% endif %}>Approved</option>
+                            <option value="Rejected" {% if allocation.status == "Rejected" %}selected{% endif %}>Rejected</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="hidden" name="id" value="{{ allocation.id }}">
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </td>
+                </form>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">No pending requests found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<center>
+    <img src="{% static 'img/gyandhara-removelogo.png' %}" alt="Company Logo" class="img-fluid my-3" style="max-width: 200px;">
+</center>
+
+<div id="input-nav">
+    <a href="{% url 'home' %}" class="primary1">Home</a> <i>&rsaquo;</i> Allocation list
+</div>
+
+{% if request.user.is_superuser %}
+    <a class="add-button btn btn-primary" href="{% url 'course_allocation' %}">
+        <i class="fas fa-plus"></i> Allocate Now
+    </a>
+{% endif %}
+
+<div class="title-1">
+    <i class="fas fa-tasks"></i> Course Allocation List
+</div>
+<div class="title-line mb-4"></div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+            <i class="{% if message.tags == 'error' %}fas fa-exclamation-circle{% else %}fas fa-check-circle{% endif %}"></i>
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="content-center mb-4">
+    <form class="search-form d-flex justify-content-center" action="" method="POST">
+        {% csrf_token %}
+        <input class="form-control me-2" type="text" name="lecturer" placeholder="Lecturer" value="{{ request.GET.lecturer }}" style="width: 200px;">
+        <input class="form-control me-2" type="text" name="course" placeholder="Course" value="{{ request.GET.course }}" style="width: 200px;">
+        <button class="btn btn-light" type="submit">
+            <i class="fas fa-search"></i> Filter
+        </button>
+    </form>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Trainer Name</th>
+                <th>Course</th>
+                <th>Category</th>
+                {% if request.user.is_superuser %}
+                    <th>Action</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in allocated_courses %}
+                {% for individual_course in course.courses.all %}
+                    <tr>
+                        <td>{{ course.lecturer.get_full_name }}</td>
+                        <td>{{ individual_course.title }} ({{ individual_course.code }})</td>
+                        <td>{{ individual_course.summary }}</td>
+                        {% if request.user.is_superuser %}
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'edit_allocated_course' pk=individual_course.pk %}" class="btn btn-sm btn-warning" title="Edit or Update">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'course_deallocate' pk=individual_course.pk %}" class="btn btn-sm btn-danger" title="Deallocate">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            {% empty %}
+                <tr>
+                    <td colspan="{% if request.user.is_superuser %}4{% else %}3{% endif %}" class="text-center text-danger">
+                        <i class="far fa-frown"></i> No Course Allocated.
+                        {% if request.user.is_superuser %}
+                            <a href="{% url 'course_allocation' %}" class="text-primary" style="font-size: 16px;">Allocate now</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

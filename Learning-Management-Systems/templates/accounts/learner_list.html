@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock title %}
+
+{% block content %}
+<center><img src="{% static 'img/gyandhara-removelogo.png' %}" alt="Company Logo" class="img-fluid my-3" style="max-width: 200px;"></center>
+<div id="input-nav"><a href="{% url 'home' %}" class="primary1">Home</a> <i>&rsaquo;</i> Aludecorian</div>
+
+{% if request.user.is_superuser %}
+<a class="add-button" href="{% url 'add_student' %}"><i class="fas fa-plus"></i>Add Aludecorian</a>
+{% endif %}
+
+{% if request.user.is_dep_head %}
+<a class="add-button" href="{% url 'add_student' %}"><i class="fas fa-plus"></i>Add Team</a>
+
+{% endif %}
+<div class="title-1"><i class="fas fa-user-graduate"></i>Team List</div>
+<div class="title-line"></div>
+
+{% if messages %}
+    {% for message in messages %}
+        {% if message.tags == 'error' %}
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>{{ message }}
+            </div>
+        {% else %}
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>{{ message }}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<div class="content-center">
+    <form class="search-form" action="" method="GET">
+
+        <input class="au-input" type="text" id="student" name="student" placeholder="ID No." value="{{ request.GET.student }}"/>
+        <input class="au-input" type="text" name="name" placeholder="Name" value="{{ request.GET.name }}"/>
+        <input class="au-input" type="text" name="department" placeholder="Course" value="{{ request.GET.department }}"/>
+        <button class="btn btn-light" type="submit">
+            <i class="fas fa-search"></i> filter
+        </button>
+    </form>
+</div>
+<!-- <form class="search-form">
+    <ul>
+        <li class="space-between"><input class="form-control" type="text" name="name" placeholder="Name"></li>
+        <li class="space-between"><input class="form-control" type="text" name="email" placeholder="Email"></li>
+        <li class="space-between"><input class="form-control" type="text" name="course" placeholder="Course"></li>
+        <button class="search-btn" type="submit">
+            <i class="fas fa-search"></i>
+        </button>
+    </ul>
+</form> -->
+
+<div class="table-responsive table-shadow table-light table-striped m-0 mt-5">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th> ID No. </th>
+                <th> Full Name </th>
+                <th> Course </th>
+                {% if request.user.is_superuser %}
+                <th> Action </th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in object_list %}
+            <tr>
+                <td> {{ forloop.counter }}.</td>
+                <td>
+    {% if student.student.id %}
+        <a href="{% url 'profile_single' student.student.id %}">{{ student.student.id }}</a>
+    {% else %}
+        {{ student.student.id }}
+    {% endif %}
+</td>
+
+                      <td>
+    {% if student.student.id %}
+        <a href="{% url 'profile_single' student.student.id %}">{{ student.student.get_full_name }}</a>
+    {% else %}
+        {{ student.student.get_full_name }}
+    {% endif %}
+</td>
+                <td>{{ student.department}}</td>
+
+                {% if request.user.is_superuser %}
+                <td>
+    {% if student.student.pk %}
+        <div class="update-delete">
+            <a href="{% url 'student_edit' student.student.pk %}" class="update" title="Edit"><i class="fas fa-edit"></i></a>
+            <form action="{% url 'student_delete' student.student.pk %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm" title="Delete"><i class="fas fa-trash-alt"></i></button>
+            </form>
+        </div>
+    {% else %}
+        <!-- Handle the case when student.student.pk is empty -->
+        <p>No action available</p>
+    {% endif %}
+</td>
+                {% endif %}
+
+                 {% if request.user.is_dep_head %}
+                <td>
+                    <div class="update-delete">
+<a href="{% if student.student.pk %}{% url 'student_edit' student.student.pk %}{% endif %}" class="update" title="Edit"><i class="fas fa-edit"></i></a>
+                        <form action="{% url 'student_delete' student.pk %}">{% csrf_token %}
+                            <button type="submit" class="btn btn-sm" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                        </form>
+                    </div>
+                </td>
+                {% endif %}
+                {% empty %}
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td>
+                  <span class="text-danger">
+                    <i class="far fa-frown"></i>No Aludecorian.
+                    {% if request.user.is_superuser %}
+                    <a href="{% url 'add_student' %}">
+                    <i class="primary" style="font-size: 22px;">
+                       Add Aludecorian Now.
+                    </i>
+
+                    {% endif %}
+                    </a>
+                  </span>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                </tr>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

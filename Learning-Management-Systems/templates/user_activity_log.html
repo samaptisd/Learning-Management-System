@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Activity Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="text-center my-4">User Activity Dashboard</h2>
+
+    <!-- Summary Cards -->
+    <div class="row text-center mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5>Total Reports Run</h5>
+                    <h3>{{ total_reports }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5>Total Users</h5>
+                    <h3>{{ total_users }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <h5>Total Spent Time</h5>
+                    <h3>{{ total_spent_time }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <div id="actionUser3DChart" style="height: 400px;"></div>
+        </div>
+        <div class="col-md-4">
+            <div id="userDuration3DChart" style="height: 400px;"></div>
+        </div>
+        <div class="col-md-4">
+            <div id="monthUser3DChart" style="height: 400px;"></div>
+        </div>
+    </div>
+
+    <!-- Activity Log Table -->
+    <h4>Activity Logs</h4>
+    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+        <table class="table table-bordered table-striped table-hover">
+            <thead class="bg-primary" style="position: sticky; top: 0; z-index: 1; background: #343a40; color: white;">
+                <tr>
+                    <th>#</th>
+                    <th>Username</th>
+                    <th>Action</th>
+                    <th>URL</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ log.user.get_full_name }}</td>
+                    <td>{{ log.action }}</td>
+                    <td>{{ log.url }}</td>
+                    <td>{{ log.start_time }}</td>
+                    <td>{{ log.end_time }}</td>
+                    <td>{{ log.duration|default:"0:00:00" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Highcharts Scripts -->
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-3d.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+<!-- Chart Scripts -->
+<script>
+Highcharts.chart('actionUser3DChart', {
+    chart: {
+        type: 'pie',
+        options3d: {
+            enabled: true,
+            alpha: 45
+        }
+    },
+    title: {
+        text: 'Action-wise Users'
+    },
+    plotOptions: {
+        pie: {
+            depth: 45
+        }
+    },
+    series: [{
+        name: 'Users',
+        data: {{ action_3d_data|safe }}
+    }]
+});
+
+Highcharts.chart('userDuration3DChart', {
+    chart: {
+        type: 'column',
+        options3d: {
+            enabled: true,
+            alpha: 10,
+            beta: 25,
+            depth: 70
+        }
+    },
+    title: {
+        text: 'User-wise Duration (seconds)'
+    },
+    xAxis: {
+        categories: {{ user_labels|safe }}
+    },
+    yAxis: {
+        title: {
+            text: 'Duration (sec)'
+        }
+    },
+    plotOptions: {
+        column: {
+            depth: 25
+        }
+    },
+    colors: ['#ed1a79', '#17a2b8', '#ffc107', '#28a745', '#dc3545'], 
+    series: [{
+        name: 'Duration',
+        data: {{ user_durations|safe }}
+    }]
+});
+
+Highcharts.chart('monthUser3DChart', {
+    chart: {
+        type: 'column',
+        options3d: {
+            enabled: true,
+            alpha: 15,
+            beta: 15,
+            depth: 70
+        }
+    },
+    title: {
+        text: 'Month-wise Users'
+    },
+    xAxis: {
+        categories: {{ month_labels|safe }}
+    },
+    yAxis: {
+        title: {
+            text: 'Users'
+        }
+    },
+    plotOptions: {
+        column: {
+            depth: 35
+        }
+    },
+    series: [{
+        name: 'Users',
+        data: {{ month_user_counts|safe }}
+    }]
+});
+</script>
+{% endblock %}

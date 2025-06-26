@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+    Download Report
+{% endblock %}
+
+{% block content %}
+<center><img src="{% static 'img/gyandhara-removelogo.png' %}" alt="Company Logo" class="img-fluid my-3" style="max-width: 200px;"></center>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="text-center">Download Report</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'report_download' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="from_date">Select From Date:</label>
+                            <input type="date" id="from_date" name="from_date" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="to_date">Select To Date:</label>
+                            <input type="date" id="to_date" name="to_date" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="report_type">Select a Report:</label>
+                            <select id="report_type" name="report_type" class="form-control" required onchange="showFilterDropdown()">
+                                <option value="">Select a Report</option>
+                                <!-- <option value="date_wise">Date Wise Report</option> -->
+                                <option value="zone_wise">Zone Wise Report</option>
+                                <option value="branch_wise">Branch Wise Report</option>
+                                <option value="department_wise">Department Wise Report</option>
+                                <!-- <option value="student_wise">Student Wise Report</option> -->
+                                <option value="quiz_report">Quiz Report</option>
+                                <option value="score_board">Score Board</option>
+                            </select>
+                        </div> 
+
+                        <div class="form-group" id="zone_dropdown" style="display:none;">
+                            <label for="zone">Select Zone:</label>
+                            <select id="zone" name="zone" class="form-control">
+                                <option value="">Select a Zone</option>
+                                {% for zone in zones %}
+                                    <option value="{{ zone }}">{{ zone }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="branch_dropdown" style="display:none;">
+                            <label for="branch">Select Branch:</label>
+                            <select id="branch" name="branch" class="form-control">
+                                <option value="">Select a Branch</option>
+                                {% for branch in branches %}
+                                    <option value="{{ branch }}">{{ branch }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="department_dropdown" style="display:none;">
+                            <label for="department">Select Department:</label>
+                            <select id="department" name="department" class="form-control">
+                                <option value="">Select a Department</option>
+                                {% for department in departments %}
+                                    <option value="{{ department }}">{{ department }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        
+
+                        <button type="submit" class="btn btn-primary btn-block">Download</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showFilterDropdown() {
+        var reportType = document.getElementById("report_type").value;
+        document.getElementById("zone_dropdown").style.display = (reportType == 'zone_wise') ? 'block' : 'none';
+        document.getElementById("branch_dropdown").style.display = (reportType == 'branch_wise') ? 'block' : 'none';
+        document.getElementById("department_dropdown").style.display = (reportType == 'department_wise') ? 'block' : 'none';
+        // document.getElementById("student_dropdown").style.display = (reportType == 'student_wise') ? 'block' : 'none';
+    }
+</script>
+
+{% endblock %}

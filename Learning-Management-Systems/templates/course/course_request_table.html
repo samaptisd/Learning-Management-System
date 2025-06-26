@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Request Course Allocations{% endblock %}
+
+{% block content %}
+<div class="container">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <center><img src="{% static 'img/gyandhara-removelogo.png' %}" alt="Company Logo" class="img-fluid my-3" style="max-width: 200px;"></center>
+
+    <!-- Add Allocation Button -->
+    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addAllocationModal">
+        Add Request
+    </button>
+
+    <!-- Add Allocation Modal -->
+    <div class="modal fade" id="addAllocationModal" tabindex="-1" aria-labelledby="courseRequestModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="courseRequestModalLabel">Add Course Allocation Request</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="{% url 'create_course_request' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="hod" class="form-label">Select HOD</label>
+                        <select name="hod" id="hod" class="form-select" required>
+                           
+                            <option value="{{ request.user.id }}">{{ request.user.get_full_name }}</option>
+                           
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="team_member" class="form-label">Team Member</label>
+                        <select name="team_member" id="team_member" class="form-select" required>
+                            {% for member in team_members %}
+                            <option value="{{ member.id }}">{{ member.get_full_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="program" class="form-label">Program</label>
+                        <select name="program" id="program" class="form-select" required>
+                            {% for program in programs %}
+                            <option value="{{ program.id }}">{{ program.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="course" class="form-label">Course</label>
+                        <select name="course" id="course" class="form-select" required>
+                            {% for course in courses %}
+                            <option value="{{ course.id }}">{{ course.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="level" class="form-label">Level</label>
+                        <select name="level" id="level" class="form-select" required>
+                            {% for level in LEVEL %}
+                            <option value="{{ level.0 }}">{{ level.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- <div class="mb-3">
+                        <label for="department" class="form-label">Department</label>
+                        <input type="text" name="department" id="department" class="form-control" value="{{ department.name }}" readonly>
+                    </div> -->
+                    <div class="mb-3">
+                        <label for="department" class="form-label">Department</label>
+                        <select name="department" id="department" class="form-select" required>
+                            {% for department in departments %}
+                            <option value="{{ department.id }}">{{ request.user.department }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mt-5">Existing Course Requests</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Team Member</th>
+                <th>Program</th>
+                <th>Course</th>
+                <th>Department</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in course_requests %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ request.team_member.get_full_name }}</td>
+                <td>{{ request.program.title }}</td>
+                <td>{{ request.course.title }}</td>
+                <td>{{ request.department}}</td>
+                <td>{{ request.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .modal-title {
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-select {
+        height: auto;
+        padding: 8px;
+        border-radius: 4px;
+        font-size: 1rem;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+        width: 150px;
+    }
+
+    .btn-secondary {
+        width: 150px;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
+{% endblock %}

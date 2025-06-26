@@ -1,0 +1,99 @@
+{% extends 'registration/registration_base.html' %}
+{% block title %}LMS - Login{% endblock title %}
+{% load crispy_forms_tags %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block content %}
+
+<div id="login" class="text-center">
+  <!-- Add logo here -->
+  <img src="{% static 'img/gyandhara-removelogo.png' %}" alt="Company Logo" class="img-fluid my-3" style="max-width: 200px;">
+  
+  <div class="login-title blue-gradient"><i class="fas fa-lock"></i>Sign in</div>
+
+  <form action="" method="POST" id="login-form">{% csrf_token %}
+    <div class="form-group px-3">
+        <label for="username_id"><i class="fas fa-address-card"></i>ID Number</label>
+        <input type="text" name="username" id="username_id" class="form-control" required>
+        <div id="message-wrapper"></div>
+    </div>
+    <div class="form-group px-3">
+        <label for="password_id"><i class="fas fa-key"></i>Password</label>
+        <input type="password" name="password" id="password_id" class="form-control" required>
+    </div>
+    {% if form.errors %}
+          <span class="text-danger"><i class="fas fa-exclamation-circle"></i> Invalid ID & Password.</span><br>
+    {% endif %}
+
+    <button type="submit" class="btn btn-primary" id="login-btn"><i class="fas fa-sign-in-alt"></i><small> SIGN IN</small></button>
+  </form>
+  
+  <br>
+  <div>
+    <b><a href="https://script.google.com/a/macros/aludecor.com/s/AKfycbz8WbudArlLgCC2slmS5pnDU8OE_Yndf2hjBSsfNX-Kl7idjqsd8xaMIC61lTVJRDM/exec" class="link" target="_blank">Share your experience</a></b>
+   </div>
+
+   <br>
+  <div class="badge">BETA</div>
+
+  <!-- <a href="{% url 'password_reset' %}" class="link">Forgot password ?</a> -->
+   
+</div>
+{% endblock content %}
+
+{% block js %}
+
+<script>
+  $('#login-form').submit(function (e) {
+    // e.preventDefault();
+    $('#login-btn').addClass('disabled')
+    $('#login-btn').html(`<i class="fas fa-sign-in-alt"></i> Signing you in . . .`)
+  })
+
+  $("#username").on("input", function () {
+    username = $(this).val();
+
+    $.ajax({
+      url: "/accounts/ajax/validate-username/",
+      data: {
+        username: username
+      },
+      dataType: 'json',
+      success: function (data) {
+        if (data.is_taken) {
+          console.log(data.is_taken);
+          $('#message-wrapper').html(`<p class="my-2 text-danger"><span class="bg-error p-2"><b>${username}</b> already taken :( try another one </span></p>`)
+        }
+        else {
+          $('#message-wrapper').html(`<p class="my-2 text-success"><span class="bg-correct p-2"><b>${username}</b> is valid </span></p>`)
+        }
+      }
+
+    })
+  })
+</script>
+<style>
+  .badge {
+      display: inline-block;
+      background-color: #00CFE8;
+      padding: 5px 10px;
+      font-size: 16px;
+      color: black;
+      font-weight: bold;
+      border-radius: 5px;
+      position: relative;
+      border: 80%;
+  }
+  
+  .badge::before {
+      content: '';
+      width: 20px;
+      height: 20px;
+      background-color: #007AFF;
+      border-radius: 80%;
+      position: absolute;
+      top: -5px;
+      left: -15px;
+  }
+</style>
+{% endblock %}
